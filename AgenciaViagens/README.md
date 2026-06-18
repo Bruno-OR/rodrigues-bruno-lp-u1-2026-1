@@ -1,0 +1,169 @@
+# Simulador de Agência de Viagens — Controle de Trânsito
+
+Simulador de gerenciamento de transporte desenvolvido em **C++** para a disciplina de Linguagem de Programação. O sistema controla a alocação de veículos, rotas, cadastro de passageiros e o avanço do tempo da simulação através de orientação a objetos e gerenciamento dinâmico de ponteiros.
+
+---
+
+## Compilação e Execução
+
+O projeto é modularizado em múltiplos arquivos de cabeçalho e um arquivo principal.
+
+### Compilar
+
+```bash
+g++ agencia.cpp -o agencia
+```
+
+### Executar manualmente
+
+```bash
+./agencia
+```
+
+### Executar com arquivo de entrada
+
+```bash
+./agencia < Arquivo.txt
+```
+
+---
+
+## Comandos
+
+### 1. `CADASTRAR_CIDADE`
+
+Adiciona uma nova cidade.
+
+```
+CADASTRAR_CIDADE
+[Nome da Cidade]
+```
+
+**Exemplo:**
+```
+CADASTRAR_CIDADE
+Natal
+```
+
+---
+
+### 2. `CADASTRAR_TRAJETO`
+
+Cria uma rota de ligação direta entre duas cidades já existentes.
+
+```
+CADASTRAR_TRAJETO
+[Cidade de Origem]
+[Cidade de Destino]
+[Tipo: 'T' para Terrestre ou 'A' para Aquático]
+[Distância em km]
+```
+
+**Exemplo:**
+```
+CADASTRAR_TRAJETO
+Natal
+Mossoró
+T
+280.0
+```
+
+---
+
+### 3. `CADASTRAR_TRANSPORTE`
+
+Insere um veículo na frota da agência.
+
+```
+CADASTRAR_TRANSPORTE
+[Nome do Veículo]
+[Tipo: 'T' ou 'A'] [Capacidade] [Velocidade em km/h] [Distância para Descanso] [Tempo de Descanso]
+[Nome da Cidade Inicial]
+```
+
+---
+
+### 4. `CADASTRAR_PASSAGEIRO`
+
+Registra um passageiro no sistema e o associa a uma cidade de origem.
+
+```
+CADASTRAR_PASSAGEIRO
+[Nome do Passageiro]
+[Nome da Cidade]
+```
+
+**Exemplo:**
+```
+CADASTRAR_PASSAGEIRO
+Jose
+Natal
+```
+
+---
+
+### 5. `CADASTRAR_VIAGEM`
+
+Inicia o despacho de um transporte com passageiros entre duas cidades que possuem trajeto direto.
+
+```
+CADASTRAR_VIAGEM
+[Nome do Transporte]
+[Cidade de Origem]
+[Cidade de Destino]
+[Quantidade de Passageiros]
+[Nome do Passageiro 1]
+[Nome do Passageiro 2]
+...
+```
+
+> O sistema valida se o veículo e os passageiros estão na cidade de origem. Se aprovado, a localização de todos é definida como `nullptr`, indicando que estão em trânsito.
+
+**Exemplo:**
+```
+CADASTRAR_VIAGEM
+Onibus 1
+Natal
+Mossoró
+1
+Maria
+```
+
+---
+
+### 6. `CADASTRAR_HORAS`
+
+Avança o relógio da simulação, movimentando os veículos em trânsito.
+
+```
+CADASTRAR_HORAS
+[Quantidade de Horas (número inteiro)]
+```
+
+> A distância percorrida é calculada multiplicando as horas pela velocidade do veículo. Quando a distância acumulada atinge ou supera a distância total do trajeto, a viagem é encerrada e os ponteiros de localização do transporte e dos passageiros são atualizados para a cidade de destino.
+
+**Exemplo:**
+```
+CADASTRAR_HORAS
+2
+```
+
+---
+
+### 7. `RELATAR_ESTADO`
+
+Imprime um relatório completo do estado atual da simulação: cidades existentes, veículos estacionados ou em viagem, e localização de cada passageiro.
+
+```
+RELATAR_ESTADO
+```
+
+---
+
+### 8. `FIM`
+
+Encerra a execução do simulador.
+
+```
+FIM
+```
