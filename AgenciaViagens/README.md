@@ -37,23 +37,26 @@ O sistema salva automaticamente o estado ao encerrar em um arquivo estado.txt. N
 
 Ao executar o programa pelo terminal, um menu é exibido com as opções disponíveis:
 
+```
 =======================================================
-
-SISTEMA INTEGRADO DE TRÂNSITO
-[1] Cadastrar Cidade
-[2] Cadastrar Trajeto
-[3] Cadastrar Transporte
-[4] Cadastrar Passageiro
-[5] Iniciar Viagem (Direta ou com Escalas)
-[6] Avançar Relógio (Simulação de Horas)
-[7] Relatar Estado Geral da Agência
-[8] Encerrar Programa (FIM)
+           SISTEMA INTEGRADO DE TRÂNSITO
+=======================================================
+  [1] Cadastrar Cidade
+  [2] Cadastrar Trajeto
+  [3] Cadastrar Transporte
+  [4] Cadastrar Passageiro
+  [5] Iniciar Viagem (Direta ou com Escalas)
+  [6] Avançar Relógio (Simulação de Horas)
+  [7] Relatar Estado Geral da Agência
+  [8] Encerrar Programa (FIM)
+-------------------------------------------------------
+```
 
 ---
 
 ## Comandos
 
-### 1. `CADASTRAR_CIDADE`
+### 1. CADASTRAR_CIDADE
 
 Adiciona uma nova cidade. Cidades duplicadas são rejeitadas.
 
@@ -64,7 +67,7 @@ Adiciona uma nova cidade. Cidades duplicadas são rejeitadas.
 
 ---
 
-### 2. `CADASTRAR_TRAJETO`
+### 2. CADASTRAR_TRAJETO
 
 Cria uma rota de ligação direta entre duas cidades já existentes. O tipo deve ser obrigatoriamente `T` para terrestre ou `A` para aquático e a distância deve ser maior que zero.
 
@@ -78,7 +81,7 @@ Cria uma rota de ligação direta entre duas cidades já existentes. O tipo deve
 
 ---
 
-### 3. `CADASTRAR_TRANSPORTE`
+### 3. CADASTRAR_TRANSPORTE
 
 Insere um veículo na frota da agência. O tipo deve ser obrigatoriamente `T` ou `A`.
 
@@ -95,7 +98,7 @@ Insere um veículo na frota da agência. O tipo deve ser obrigatoriamente `T` ou
 
 ---
 
-### 4. `CADASTRAR_PASSAGEIRO`
+### 4. CADASTRAR_PASSAGEIRO
 
 Registra um passageiro no sistema e o associa a uma cidade de origem.
 
@@ -107,7 +110,7 @@ Registra um passageiro no sistema e o associa a uma cidade de origem.
 
 ---
 
-### 5. `CADASTRAR_VIAGEM`
+### 5. CADASTRAR_VIAGEM
 
 Inicia o despacho de um transporte com passageiros entre duas cidades.
 
@@ -125,7 +128,7 @@ Inicia o despacho de um transporte com passageiros entre duas cidades.
 
 ---
 
-### 6. `CADASTRAR_HORAS`
+### 6. CADASTRAR_HORAS
 
 Avança o relógio da simulação hora a hora, movimentando os veículos em trânsito e gerenciando a fadiga dos motoristas. A quantidade de horas deve ser maior que zero.
 
@@ -138,7 +141,7 @@ Avança o relógio da simulação hora a hora, movimentando os veículos em trâ
 
 ---
 
-### 7. `RELATAR_ESTADO`
+### 7. RELATAR_ESTADO
 
 Imprime um relatório completo do estado atual da simulação, contendo:
 
@@ -150,6 +153,6 @@ Imprime um relatório completo do estado atual da simulação, contendo:
 
 ---
 
-### 8. `FIM`
+### 8. FIM
 
 Salva o estado atual em `estado.txt`, libera a memória alocada dinamicamente e encerra a execução do simulador.
