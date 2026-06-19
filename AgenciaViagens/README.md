@@ -104,7 +104,7 @@ Natal
 
 ### 5. `CADASTRAR_VIAGEM`
 
-Inicia o despacho de um transporte com passageiros entre duas cidades que possuem trajeto direto.
+Inicia o despacho de um transporte com passageiros entre duas cidades.
 
 ```
 CADASTRAR_VIAGEM
@@ -117,14 +117,14 @@ CADASTRAR_VIAGEM
 ...
 ```
 
-> O sistema valida se o veículo e os passageiros estão na cidade de origem. Se aprovado, a localização de todos é definida como `nullptr`, indicando que estão em trânsito.
+**Funcionamento com Escalas (Conexões):** O sistema valida se o veículo e os passageiros estão na cidade de origem. Se houver um trajeto direto, a viagem inicia-se imediatamente. Caso contrário, o sistema busca uma cidade de conexão viável e gera uma estrutura encadeada de viagens utilizando ponteiros (proxima), mantendo o transporte e passageiros em trânsito até a conclusão total da viagem.
 
 **Exemplo:**
 ```
 CADASTRAR_VIAGEM
-Onibus 1
+Onibus
 Natal
-Mossoró
+Fortaleza
 1
 Maria
 ```
@@ -161,7 +161,7 @@ RELATAR_ESTADO
 
 ### 8. `FIM`
 
-Encerra a execução do simulador.
+Realiza a liberação da memória alocada dinamicamente e encerra a execução do simulador.
 
 ```
 FIM

@@ -116,7 +116,6 @@ public:
 
     void iniciarViagem(string nomeTransporte, vector<string> nomesPassageiros, string nomeOrigem, string nomeDestino)
     {
-
         // Encontrar o ponteiro do Transporte
         Transporte *transpEscolhido = nullptr;
         for (int i = 0; i < transportes.size(); i++)
@@ -158,7 +157,7 @@ public:
         // Validação para garantir que o transporte ou cidade existem
         if (transpEscolhido == nullptr || cidOrigem == nullptr || cidDestino == nullptr)
         {
-            cout << "Erro: Transporte, Origem ou Destino nao encontrados no sistema!" << endl;
+            cout << "Erro: Transporte, Origem ou Destino não encontrados no sistema!" << endl;
             return;
         }
 
@@ -213,7 +212,6 @@ public:
 
             // Transporte em transito
             transpEscolhido->setLocalAtual(nullptr);
-
             // Passageiros em transito
             for (int i = 0; i < passageirosEncontrados.size(); i++)
             {
@@ -224,13 +222,64 @@ public:
         }
         else
         {
-            cout << "Alerta: Nao existe trajeto direto. Lógica de conexões sera necessária." << endl;
+            // --- ESCALAS ---
+            Cidade *cidConexao = nullptr;
+
+            // Busca uma cidade intermediária varrendo os trajetos existentes
+            for (int i = 0; i < trajetos.size(); i++)
+            {
+                if (trajetos[i]->getOrigem() == cidOrigem && trajetos[i]->getTipo() == transpEscolhido->getTipo())
+                {
+                    Cidade *possivelConexao = trajetos[i]->getDestino();
+
+                    // Verifica se essa cidade conecta com o destino final
+                    for (int j = 0; j < trajetos.size(); j++)
+                    {
+                        if (trajetos[j]->getOrigem() == possivelConexao && trajetos[j]->getDestino() == cidDestino && trajetos[j]->getTipo() == transpEscolhido->getTipo())
+                        {
+                            cidConexao = possivelConexao;
+                            break;
+                        }
+                    }
+                    if (cidConexao != nullptr)
+                        break;
+                }
+            }
+
+            if (cidConexao == nullptr)
+            {
+                cout << "Alerta: Não foi possível encontrar rotas diretas ou conexões válidas com esse tipo de transporte." << endl;
+                return;
+            }
+
+            // Cria o trecho 2 (Da Conexão até o Destino Final) - Começa pausado (false)
+            Viagem *viagemTrecho2 = new Viagem(transpEscolhido, passageirosEncontrados, cidConexao, cidDestino);
+            viagemTrecho2->setEmAndamento(false);
+
+            // Cria o trecho 1 (Da Origem até a Conexão) - Começa em andamento (true)
+            Viagem *viagemTrecho1 = new Viagem(transpEscolhido, passageirosEncontrados, cidOrigem, cidConexao);
+            viagemTrecho1->setEmAndamento(true);
+
+            // Encadeia as duas
+            viagemTrecho1->setProxima(viagemTrecho2);
+
+            // Cadastra ambas no vetor de viagens
+            viagens.push_back(viagemTrecho1);
+            viagens.push_back(viagemTrecho2);
+
+            // Define transporte e passageiros em trânsito
+            transpEscolhido->setLocalAtual(nullptr);
+            for (int i = 0; i < passageirosEncontrados.size(); i++)
+            {
+                passageirosEncontrados[i]->setLocalAtual(nullptr);
+            }
+
+            cout << "Viagem com conexao via " << cidConexao->getNome() << " iniciada com sucesso!" << endl;
         }
     };
 
     void avancarHoras(int horas)
     {
-        // O laço principal passa de hora em hora
         for (int h = 0; h < horas; h++)
         {
             for (int i = 0; i < viagens.size(); i++)
@@ -246,14 +295,12 @@ public:
                     if (t->getHorasRestantesDeDescanso() > 0)
                     {
                         t->reduzirHoraDescanso();
-                        // Se está descansando, então pula esta hora
-                        continue;
+                        continue; // Se o motorista está descansando, pula essa hora
                     }
 
-                    // Se não está descansando, o veículo roda nesta hora
                     v->adicionarHora();
 
-                    // Busca do trajeto da viagem para saber a distancia total
+                    // Busca do trajeto para saber a distancia total do trecho atual
                     double distanciaTotal = 0;
                     for (int j = 0; j < trajetos.size(); j++)
                     {
@@ -264,35 +311,47 @@ public:
                         }
                     }
 
-                    // O quanto viajou até agora
+                    // Cálculo da distância percorrida e acumulação de descanso
                     double distanciaPercorrida = t->getVelocidade() * v->getHorasEmTransito();
-
-                    // Acumula os quilômetros rodados
                     t->adicionarKm(t->getVelocidade());
 
-                    // Verificação de limite
+                    // Verificação de fadiga
                     if (t->getKmAcumulados() >= t->getDistanciaEntreDescansos())
                     {
                         t->iniciarDescanso();
-                        cout << "O transporte '" << t->getNome() << "' atingiu o limite de condução e parou para descansar por " << t->getTempoDescansoAtual() << " horas." << endl;
+                        cout << "[Descanso] O transporte '" << t->getNome() << "' atingiu o limite de conducao e parou para descansar por " << t->getTempoDescansoAtual() << " horas." << endl;
                     }
 
-                    // Verifica se passou ou igualou a distancia total
+                    // Verificação de chegada no destino do trecho
                     if (distanciaPercorrida >= distanciaTotal)
                     {
                         v->setEmAndamento(false);
-                        t->setLocalAtual(dest);
 
-                        // Ao chegar no destino, reseta o painel de km rodados para a próxima viagem
-                        t->iniciarDescanso();
-                        t->reduzirHoraDescanso();
-
-                        vector<Passageiro *> passageirosABordo = v->getPassageiros();
-                        for (int p = 0; p < passageirosABordo.size(); p++)
+                        // Se houver uma viagem de conexão na sequência
+                        if (v->getProxima() != nullptr)
                         {
-                            passageirosABordo[p]->setLocalAtual(dest);
+                            cout << "O transporte '" << t->getNome() << "' chegou a cidade de conexao: " << dest->getNome() << ". Iniciando proximo trecho da viagem..." << endl;
+
+                            // Ativa a próxima viagem para começar a rodar na próxima hora
+                            v->getProxima()->setEmAndamento(true);
                         }
-                        cout << "A viagem chegou ao destino! O transporte '" << t->getNome() << "' e seus passageiros desembarcaram em " << dest->getNome() << "." << endl;
+                        else
+                        {
+                            // Se não houver conexão, então é o destino final
+                            t->setLocalAtual(dest);
+
+                            vector<Passageiro *> passageirosABordo = v->getPassageiros();
+                            for (int p = 0; p < passageirosABordo.size(); p++)
+                            {
+                                passageirosABordo[p]->setLocalAtual(dest);
+                            }
+
+                            // Reseta o descanso ao finalizar a viagem
+                            t->iniciarDescanso();
+                            t->reduzirHoraDescanso();
+
+                            cout << "A viagem chegou ao destino final! O transporte '" << t->getNome() << "' e seus passageiros desembarcaram em " << dest->getNome() << "." << endl;
+                        }
                     }
                 }
             }
@@ -379,6 +438,20 @@ public:
         cout << "==============================================\n"
              << endl;
     };
+
+    void limparMemoria()
+    {
+        for (int i = 0; i < cidades.size(); i++)
+            delete cidades[i];
+        for (int i = 0; i < trajetos.size(); i++)
+            delete trajetos[i];
+        for (int i = 0; i < transportes.size(); i++)
+            delete transportes[i];
+        for (int i = 0; i < passageiros.size(); i++)
+            delete passageiros[i];
+        for (int i = 0; i < viagens.size(); i++)
+            delete viagens[i];
+    }
 };
 
 #endif

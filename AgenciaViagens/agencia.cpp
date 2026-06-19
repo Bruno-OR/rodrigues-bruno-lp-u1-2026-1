@@ -94,7 +94,9 @@ int main()
         {
             controlador.relatarEstado();
         }
-    }
+    };
+
+    controlador.limparMemoria();
 
     return 0;
 }
