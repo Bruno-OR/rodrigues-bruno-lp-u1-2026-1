@@ -28,5 +28,4 @@ public:
         localAtual = novaCidade;
     }
 };
-
 #endif

@@ -44,5 +44,4 @@ public:
     void setEmAndamento(bool status) { emAndamento = status; }
     void adicionarHora() { horasEmTransito++; }
 };
-
 #endif

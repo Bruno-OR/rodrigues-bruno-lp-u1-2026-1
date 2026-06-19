@@ -63,6 +63,11 @@ public:
         }
     }
 
+    void resetarKm()
+    {
+        km_acumulados = 0;
+    }
+
     // Acumula os km rodados na hora atual
     void adicionarKm(int km)
     {

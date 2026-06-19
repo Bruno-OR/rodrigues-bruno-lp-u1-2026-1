@@ -10,18 +10,24 @@ class Cidade
 {
 private:
     string nome;
+    int visitas;
 
 public:
     // Construtor para criar a cidade com o nome
     Cidade(string nomeCidade)
     {
         nome = nomeCidade;
+        visitas = 0;
     }
 
     string getNome()
     {
         return nome;
     }
+
+    int getVisitas() { return visitas; }
+
+    void registrarVisita() { visitas++; }
 };
 
 #endif

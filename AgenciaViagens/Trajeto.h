@@ -30,5 +30,4 @@ public:
     char getTipo() { return tipo; }
     double getDistancia() { return distancia; }
 };
-
 #endif
