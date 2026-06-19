@@ -45,7 +45,6 @@ int main()
             cin >> tipo >> capacidade >> velocidade >> distDescanso >> tempoDescanso;
             cin >> ws;
 
-
             getline(cin >> ws, nomeCidadeInicial);
 
             controlador.cadastrarTransporte(nomeTransp, tipo, capacidade, velocidade, distDescanso, tempoDescanso, nomeCidadeInicial);

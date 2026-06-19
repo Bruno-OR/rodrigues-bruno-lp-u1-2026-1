@@ -230,6 +230,7 @@ public:
 
     void avancarHoras(int horas)
     {
+        // O laço principal passa de hora em hora
         for (int h = 0; h < horas; h++)
         {
             for (int i = 0; i < viagens.size(); i++)
@@ -238,11 +239,21 @@ public:
 
                 if (v->isEmAndamento())
                 {
-                    v->adicionarHora();
                     Transporte *t = v->getTransporte();
                     Cidade *dest = v->getDestino();
 
-                    // busca do trajeto da viagem para saber a distancia total
+                    // Verificação de descanso
+                    if (t->getHorasRestantesDeDescanso() > 0)
+                    {
+                        t->reduzirHoraDescanso();
+                        // Se está descansando, então pula esta hora
+                        continue;
+                    }
+
+                    // Se não está descansando, o veículo roda nesta hora
+                    v->adicionarHora();
+
+                    // Busca do trajeto da viagem para saber a distancia total
                     double distanciaTotal = 0;
                     for (int j = 0; j < trajetos.size(); j++)
                     {
@@ -252,14 +263,29 @@ public:
                             break;
                         }
                     }
-                    // calculo do quanto o tranporte ja andou
+
+                    // O quanto viajou até agora
                     double distanciaPercorrida = t->getVelocidade() * v->getHorasEmTransito();
 
-                    // Verifica se passou ou igualou a distancia total, se sim, a viagem acabou
+                    // Acumula os quilômetros rodados
+                    t->adicionarKm(t->getVelocidade());
+
+                    // Verificação de limite
+                    if (t->getKmAcumulados() >= t->getDistanciaEntreDescansos())
+                    {
+                        t->iniciarDescanso();
+                        cout << "O transporte '" << t->getNome() << "' atingiu o limite de condução e parou para descansar por " << t->getTempoDescansoAtual() << " horas." << endl;
+                    }
+
+                    // Verifica se passou ou igualou a distancia total
                     if (distanciaPercorrida >= distanciaTotal)
                     {
                         v->setEmAndamento(false);
                         t->setLocalAtual(dest);
+
+                        // Ao chegar no destino, reseta o painel de km rodados para a próxima viagem
+                        t->iniciarDescanso();
+                        t->reduzirHoraDescanso();
 
                         vector<Passageiro *> passageirosABordo = v->getPassageiros();
                         for (int p = 0; p < passageirosABordo.size(); p++)
@@ -307,15 +333,23 @@ public:
                 Transporte *t = transportes[i];
                 cout << "- " << t->getNome() << " [Tipo: " << t->getTipo() << "] -> ";
 
-                // Se o local atual for diferente de nullptr, ele está estacionado em uma cidade
+                // Se o local atual for diferente de nullptr, ele está estacionado na cidade
                 if (t->getLocalAtual() != nullptr)
                 {
                     cout << "Estacionado em: " << t->getLocalAtual()->getNome() << endl;
                 }
                 else
                 {
-                    // Se for nullptr, significa que ele está em transito
-                    cout << "Em trânsito (viajando)..." << endl;
+                    // Se for nullptr, ele está na estrada. Verifica se está andando ou dormindo:
+                    if (t->getHorasRestantesDeDescanso() > 0)
+                    {
+                        cout << "Em trânsito (PARADO PARA DESCANSO - Faltam "
+                             << t->getHorasRestantesDeDescanso() << "h)" << endl;
+                    }
+                    else
+                    {
+                        cout << "Em trânsito (viajando)..." << endl;
+                    }
                 }
             }
         }
@@ -342,7 +376,8 @@ public:
                 }
             }
         }
-        cout << "==============================================\n" << endl;
+        cout << "==============================================\n"
+             << endl;
     };
 };
 

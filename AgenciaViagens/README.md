@@ -14,16 +14,16 @@ O projeto é modularizado em múltiplos arquivos de cabeçalho e um arquivo prin
 g++ agencia.cpp -o agencia
 ```
 
-### Executar manualmente
+### Executar manualmente pelo CMD
 
 ```bash
-./agencia
+agencia
 ```
 
 ### Executar com arquivo de entrada
 
 ```bash
-./agencia < Arquivo.txt
+agencia < Arquivo.txt
 ```
 
 ---
@@ -133,14 +133,13 @@ Maria
 
 ### 6. `CADASTRAR_HORAS`
 
-Avança o relógio da simulação, movimentando os veículos em trânsito.
+Avança o relógio da simulação hora a hora, movimentando os veículos em trânsito e gerenciando a fadiga dos motoristas.
 
 ```
 CADASTRAR_HORAS
 [Quantidade de Horas (número inteiro)]
 ```
-
-> A distância percorrida é calculada multiplicando as horas pela velocidade do veículo. Quando a distância acumulada atinge ou supera a distância total do trajeto, a viagem é encerrada e os ponteiros de localização do transporte e dos passageiros são atualizados para a cidade de destino.
+> **Funcionamento:** O tempo avança de hora em hora. A cada ciclo, o sistema verifica se o veículo atingiu o limite de quilômetros para condução (Distância para Descanso). Se atingido, o transporte entra em estado de repouso obrigatório pelo Tempo de Descanso determinado, pausando seu avanço na estrada enquanto o relógio geral continua correndo. Ao atingir o destino, o estado de fadiga é reiniciado.
 
 **Exemplo:**
 ```
