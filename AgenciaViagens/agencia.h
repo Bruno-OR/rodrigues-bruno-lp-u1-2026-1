@@ -382,6 +382,8 @@ public:
                     }
 
                     v->adicionarHora();
+                    v->adicionarHora();
+                    v->adicionarKm(t->getVelocidade());
 
                     // Busca do trajeto para saber a distancia total do trecho atual
                     double distanciaTotal = 0;
@@ -396,20 +398,18 @@ public:
 
                     // Cálculo da distância percorrida e acumulação de descanso
                     double distanciaPercorrida = t->getVelocidade() * v->getHorasEmTransito();
-                    t->adicionarKm(t->getVelocidade());
+                     t->adicionarKm(t->getVelocidade());
 
                     // Verificação de fadiga
                     if (t->getKmAcumulados() >= t->getDistanciaEntreDescansos())
                     {
                         t->iniciarDescanso();
-                        cout << "[Descanso] O transporte '" << t->getNome()
-                             << "' atingiu o limite de condução e parou para descansar por "
-                             << t->getTempoDescansoAtual()
-                             << (t->getTempoDescansoAtual() == 1 ? " hora." : " horas.") << endl;
+                        cout << "[Descanso] O transporte '" << t->getNome() << "' atingiu o limite de condução e parou para descansar por " << t->getTempoDescansoAtual() << (t->getTempoDescansoAtual() == 1 ? " hora." : " horas.") << endl;
                     }
+                    double distanciaPercorrida = (double)v->getHorasEmTransito() * t->getVelocidade();
 
                     // Verificação de chegada no destino do trecho
-                    if (distanciaPercorrida >= distanciaTotal)
+                    if (v->getKmPercorridos() >= distanciaTotal)
                     {
                         v->setEmAndamento(false);
 

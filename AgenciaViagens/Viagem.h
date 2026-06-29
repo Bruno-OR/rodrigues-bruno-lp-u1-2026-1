@@ -19,6 +19,7 @@ private:
     Viagem *proxima; // Ponteiro para conexao de viagens
     int horasEmTransito;
     bool emAndamento;
+    double kmPercorridos;
 
 public:
     Viagem(Transporte *t, vector<Passageiro *> p, Cidade *o, Cidade *d)
@@ -30,6 +31,8 @@ public:
         proxima = nullptr; // Comeca sem conexao definida
         horasEmTransito = 0;
         emAndamento = false;
+        kmPercorridos = 0;
+
     }
 
     Transporte *getTransporte() { return transporte; }
@@ -43,5 +46,7 @@ public:
     void setProxima(Viagem *prox) { proxima = prox; }
     void setEmAndamento(bool status) { emAndamento = status; }
     void adicionarHora() { horasEmTransito++; }
+    void adicionarKm(double km) { kmPercorridos += km; }
+    double getKmPercorridos() { return kmPercorridos; }
 };
 #endif
